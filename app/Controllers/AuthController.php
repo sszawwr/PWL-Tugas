@@ -18,17 +18,19 @@ public function login()
         $username = $this->request->getVar('username');
         $password = $this->request->getVar('password');
 
-        $dataUser = ['username' => 'april', 'password' => '202cb962ac59075b964b07152d234b70', 'role' => 'admin']; // passw 123
+        $dataUser = ['username' => 'Annisa Salwa', 'password' => '202cb962ac59075b964b07152d234b70', 'role' => 'admin']; // passw 123
 
         if ($username == $dataUser['username']) {
             if (md5($password) == $dataUser['password']) {
                 session()->set([
                     'username' => $dataUser['username'],
                     'role' => $dataUser['role'],
+                    'email' => '111202415962@mhs.dinus.ac.id',
+                    'login_time' => date('Y-m-d H:i:s'),
                     'isLoggedIn' => TRUE
                 ]);
 
-                return redirect()->to(base_url('/'));
+                return redirect()->to('/profile');
             } else {
                 session()->setFlashdata('failed', 'Username & Password Salah');
                 return redirect()->back();
@@ -38,7 +40,7 @@ public function login()
             return redirect()->back();
         }
     } else {
-        return view('v_login');
+        return view('login');
     }
 }
 

@@ -5,11 +5,13 @@ use CodeIgniter\Router\RouteCollection;
 /**
  * @var RouteCollection $routes
  */
+
 $routes->get('/', 'Home::index');
 
 $routes->get('login', 'AuthController::login');
 $routes->post('login', 'AuthController::login');
 $routes->get('logout', 'AuthController::logout');
 
-$routes->get('/produk', 'Produk::index');
-$routes->get('/keranjang', 'Keranjang::index');
+$routes->get('/produk', 'Produk::index', ['filter' => 'auth']);
+$routes->get('/keranjang', 'Keranjang::index', ['filter' => 'auth']);
+$routes->get('/profile', 'Profile::index', ['filter' => 'auth']);
