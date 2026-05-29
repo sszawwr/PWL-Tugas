@@ -37,7 +37,7 @@ class AuthController extends BaseController
                 if ($dataUser) {
 
                     // cek password
-                    if (md5($password) == $dataUser['password']) {
+                    if (($password) == $dataUser['password']) {
 
                         session()->set([
                             'username' => $dataUser['username'],
