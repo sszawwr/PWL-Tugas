@@ -2,7 +2,7 @@
 
 namespace App\Controllers;
 
-class TransaksiController extends BaseController
+class Keranjang extends BaseController
 {
     public function index()
     {

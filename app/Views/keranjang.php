@@ -85,6 +85,9 @@
    class="btn btn-warning">
     Kosongkan Keranjang
 </a>
+<?php if (!empty($items)) : ?>
+    <a class="btn btn-success" href="<?php echo base_url() ?>checkout">Selesai Belanja</a>
+<?php endif; ?>
 
 <?= form_close() ?>
 
