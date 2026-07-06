@@ -41,6 +41,15 @@
         'readonly' => true]) ?>
 </div>
 <div class="col-12">
+    <?= form_label('Kode Kupon', 'kupon_code', ['class' => 'form-label']) ?>
+    <?= form_input([
+        'name' => 'kupon_code',
+        'id' => 'kupon_code',
+        'class' => 'form-control',
+        'placeholder' => 'Contoh: HEMAT20'
+    ]) ?>
+</div>
+<div class="col-12">
     <?= form_submit(
         'submit',
         'Buat Pesanan',
@@ -75,15 +84,34 @@
       endif;
       ?>
       <tr>
-          <td colspan="2"></td>
-          <td>Subtotal</td>
-          <td><?= number_to_currency($total, 'IDR') ?></td>
-      </tr>
-      <tr>
-          <td colspan="2"></td>
-          <td>Total</td>
-          <td><span id="total"><?= number_to_currency($total, 'IDR') ?></span></td>
-      </tr>
+    <td colspan="2"></td>
+    <td>Subtotal</td>
+    <td><?= number_to_currency($total, 'IDR') ?></td>
+</tr>
+
+<tr>
+    <td colspan="2"></td>
+    <td>PPN (12%)</td>
+    <td id="ppn">Rp 0</td>
+</tr>
+
+<tr>
+    <td colspan="2"></td>
+    <td>Biaya Admin</td>
+    <td id="biaya_admin">Rp 0</td>
+</tr>
+
+<tr>
+    <td colspan="2"></td>
+    <td>Diskon Kupon</td>
+    <td id="diskon_kupon">- Rp 0</td>
+</tr>
+
+<tr>
+    <td colspan="2"></td>
+    <td><strong>Grand Total</strong></td>
+    <td><strong><span id="total"><?= number_to_currency($total, 'IDR') ?></span></strong></td>
+</tr>
   </tbody>
 </table>
     </div>
@@ -97,10 +125,38 @@ let subtotal = <?= $total ?>;
 hitungTotal();
 
 function hitungTotal() {
-    let total = subtotal + ongkir;
+
+    let kupon = $("#kupon_code").val().toUpperCase();
+
+    let diskon = 0;
+
+    if (kupon == "HEMAT20")
+        diskon = subtotal * 0.20;
+    else if (kupon == "HEMAT30")
+        diskon = subtotal * 0.30;
+    else if (kupon == "MEMBER25")
+        diskon = subtotal * 0.25;
+
+    let ppn = subtotal * 0.12;
+
+    let admin = 0;
+
+    if (subtotal <= 15000000)
+        admin = subtotal * 0.005;
+    else if (subtotal <= 35000000)
+        admin = subtotal * 0.007;
+    else
+        admin = subtotal * 0.009;
+
+    let total = subtotal - diskon + ppn + admin + ongkir;
 
     $("#ongkir").val(ongkir);
-    $("#total").text(`IDR ${total.toLocaleString('id-ID')}`);
+
+    $("#ppn").text("Rp " + ppn.toLocaleString('id-ID'));
+    $("#biaya_admin").text("Rp " + admin.toLocaleString('id-ID'));
+    $("#diskon_kupon").text("- Rp " + diskon.toLocaleString('id-ID'));
+
+    $("#total").text("IDR " + total.toLocaleString('id-ID'));
     $("#total_harga").val(total);
 }
 	$('#kelurahan').select2({
@@ -167,6 +223,10 @@ $("#layanan").on('change', function() {
     ongkir = parseInt($(this).val());
     hitungTotal();
 }); 
+
+$("#kupon_code").on("keyup change", function () {
+    hitungTotal();
+});
 });
 </script>
 <?= $this->endSection() ?>

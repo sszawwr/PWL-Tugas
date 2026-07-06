@@ -16,7 +16,7 @@ class TransaksiController extends BaseController
 
     public function __construct()
     {
-        helper(['number', 'form']);
+        helper(['number', 'form', 'transaksi']);
         $this->cart = service('cart');
         $this->transactionModel = new TransactionModel();
         $this->transactionDetailModel = new TransactionDetailModel(); 
@@ -169,13 +169,28 @@ public function buy()
 
     $ongkir = (int) $this->request->getPost('ongkir');
 
+    $kupon_code = $this->request->getPost('kupon_code');
+
+$ppn = hitung_ppn($subtotal);
+
+$biaya_admin = hitung_biaya_admin($subtotal);
+
+$diskon_kupon = hitung_diskon_kupon($subtotal, $kupon_code);
+
     $transaction = [
-        'username'    => $this->request->getPost('username'),
-        'alamat'      => $this->request->getPost('alamat'),
-        'ongkir'      => $ongkir,
-        'total_harga' => $subtotal + $ongkir,
-        'status'      => 0, 
-    ];
+    'username'       => $this->request->getPost('username'),
+    'alamat'         => $this->request->getPost('alamat'),
+    'ongkir'         => $ongkir,
+
+    'ppn'            => $ppn,
+    'biaya_admin'    => $biaya_admin,
+    'kupon_code'     => $kupon_code,
+    'diskon_kupon'   => $diskon_kupon,
+
+    'total_harga'    => $subtotal - $diskon_kupon + $ppn + $biaya_admin + $ongkir,
+
+    'status'         => 0,
+];
 
     // insert transaction
     if (!$this->transactionModel->insert($transaction)) {
